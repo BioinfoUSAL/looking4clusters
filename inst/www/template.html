@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>looking4clusters</title>
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/icons.css">
+<link rel="stylesheet" href="css/responsee.css">
+<link rel="stylesheet" href="css/template-style.css">
+<link rel="stylesheet" href="css/graphs.css">
+<script type="text/javascript" src="js/d3.min.js"></script>
+<script type="text/javascript" src="js/jszip.min.js"></script>
+<script type="text/javascript" src="js/jspdf.min.js"></script>
+<script type="text/javascript" src="js/graphs.js"></script>
+<script type="text/javascript" src="js/lasso.js"></script>
+<script type="text/javascript" src="js/cluster.js"></script>
+</head>
+  <body class="size-1140">
+<div style="display:none;">
+<!--data-->
+</div>
+    <!-- HEADER -->
+    <header role="banner" class="position-absolute">
+      <!-- Top Navigation -->
+      <nav class="background-transparent background-transparent-hightlight full-width sticky">
+        <div class="s-12 l-2 logo">
+            <!-- Logo White Version -->
+            <img class="logo-white right" src="images/logo.png" alt="">
+            <!-- Logo Dark Version -->
+            <img class="logo-dark right" src="images/logo-dark.png" alt="">
+        </div>
+        <div class="s-12 l-3">
+          <h1 class="text-white webtitle">looking4clusters</h1>
+        </div>
+      </nav>
+    </header>
+    
+    <!-- MAIN -->
+    <main role="main" class="background-white">
+      <!-- Main Header -->
+        <header class="section-top-small-padding background-dark">
+          <div class="full-width">
+            <div class="s-12 m-12 l-7">
+              <h6>&nbsp;</h6>
+            </div>
+          </div>
+        </header>
+      <section class="section full-width padding">
+<div class="sidebar s-12 m-12 l-4">
+<h2 class="editable margin-bottom-30"><span><!--name--></span> <i class="icon-sli-pencil text-dark" title="Edit Analysis Name"></i> <i class="icon-newspaper text-dark" title="Generate PDF Report"></i></h2>
+<div class="myGroups">
+<h4>My Groups<i class="icon-plus text-dark newgroup" title="Create New Group"></i><i class="icon-list text-dark viewgroups hidden" title="List my groups"></i><i class="icon-node_color text-dark colorgroups hidden" title="Automatic coloring of groups"></i><i class="icon-node_shape text-dark shapegroups hidden" title="Automatic shape change"></i> <i class="icon-download text-dark downloadgroups hidden" title="Download My Groups"></i></h4>
+<ul class="margin-bottom-15 i-options">
+  <li>&lt;empty&gt;</li>
+</ul>
+</div>
+<div class="groupBy margin-top-15">
+<h4>Group Stats By</h4>
+<select></select>
+<ul></ul>
+</div>
+<div class="newGraphs margin-top-15">
+<h4>New Plot</h4>
+<div>
+  <input id="input-variable1" class="variable-input" placeholder="Write a variable name..." />
+  <input id="input-variable2" class="variable-input" placeholder="Write a variable name..." />
+  <button class="button button-dark-stroke rounded-btn">Create</button>
+</div>
+</div>
+<div class="variableColor margin-top-15">
+<h4>Color by variable data</h4>
+<div>
+  <input id="input-variable3" class="variable-input" placeholder="Write a variable name..." />
+  <button class="button button-dark-stroke rounded-btn">Apply</button>
+</div>
+</div>
+</div>
+<div class="main margin-top-10 s-12 m-12 l-6">
+<div class="buttons">
+<button class="addtogroup button button-dark-stroke rounded-btn">Add to...</button>
+<button class="removefrom button button-dark-stroke rounded-btn">Remove from groups</button>
+<button class="resetvis button button-dark-stroke rounded-btn">Reset</button>
+</div>
+<div class="plots">
+<h2 class="loading padding text-center">Loading...</h2>
+</div>
+<div class="minimized-plots"></div>
+</div>
+<div class="sidebar2 s-12 m-12 l-2">
+<h3>Locate Samples</h3>
+<input id="search-sample" class="margin-top-10" placeholder="Write a sample..." />
+<input id="search-pattern" class="margin-top-10" placeholder="Write a sample pattern..." />
+<h3 class="margin-top-15">Selected Samples <input type="checkbox" class="selectsamples" title="select all/none"/></h3>
+<ul class="selected-samples i-options"><li>&lt;empty&gt;</li></ul>
+</div>
+      </section>
+
+    </main>
+    
+    <!-- FOOTER -->
+    <footer>
+      <hr class="break margin-top-bottom-0">
+      
+      <!-- Main Footer -->
+      <section class="full-width">
+        <!-- Collumn 1 -->
+<a href="http://www.usal.es/"><div class="float-left padding"><img class="center" src="images/logo-usal.png" /></div></a><a href="http://nucleus.usal.es/"><div class="float-left padding"><img class="center" src="images/logo-nucleus.png" /></div></a><a href="https://bioinfo.usal.es/"><div class="float-left padding"><img class="center" src="images/logo-bioinfo.png" /></div></a>      </section>
+      <hr class="break margin-top-bottom-0" style="border-color: rgba(0, 38, 51, 0.80);">
+      
+      <!-- Bottom Footer -->
+      <section class="padding background-dark full-width">
+        <div class="s-12 l-6">
+          <p class="text-size-12">Copyright 2019, Bioinformatics - USAL</p>
+        </div>
+        <div class="s-12 l-6">
+          <p class="right text-size-12">Developed by <a href="https://bioinfo.usal.es" title="Bioinformatics - USAL">Bioinformatics - USAL</a></p>
+        </div>
+      </section>
+    </footer>
+</body>
+</html>
