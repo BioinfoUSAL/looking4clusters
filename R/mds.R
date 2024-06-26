@@ -9,6 +9,7 @@ run_mds <- function(object,threads=NULL){
         distMatrix <- parallelDist::parDist(data,
             method="canberra", threads=threads)
     }else{
+        message("installing 'parallelDist' can improve performance")
         distMatrix <- dist(data,method="canberra")
     }
 

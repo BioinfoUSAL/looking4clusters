@@ -58,6 +58,7 @@ object <- clustering_tables(object,iter,allClassfPam,numberClustersPAM,
 run_pam <- function(selectedk,dissimilarity,kmin,kmax,iter,data){
 ## PAM:
 allClassfPam <- NULL
+numberClustersPAM <- NULL
 if(installed("cluster")){
     if(is.null(selectedk)){
         # Calinski Harabasz
@@ -109,6 +110,7 @@ get_dissimilarity <- function(distance,data,threads){
 run_hclust <- function(agglomeration,dissimilarity,kmin,kmax,selectedk,iter){
 ## HCLUST:
 Hclusters <- NULL
+numberClustersHclust <- NULL
 if(installed("dendextend")){
 
 if(!(agglomeration %in% c("ward.D", "ward.D2", "single", "complete",
