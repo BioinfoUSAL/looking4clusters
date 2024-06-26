@@ -194,43 +194,74 @@ add_cluster <- function(object, data, name=NULL, groupStatsBy=FALSE,
 }
 
 display_html <- function(object, includeData = TRUE, directory = tempfile()){
-    if(inherits(object,"looking4clusters")){
-        datadir <- paste0(directory,"/data")
-
-        if(file.exists(directory))
-            unlink(directory, recursive = TRUE)
-        dir.create(directory)
-        dir.create(datadir)
-
-        write(object$samples,file=paste0(datadir,"/samples.txt"))
-        if(includeData){
-            write(object$variables,file=paste0(datadir,"/variables.txt"))
-            adj <- adjacency(object$data)
-            adj <- adj[!is.na(adj[,3]),]
-            adj[,3] <- signif(adj[,3],3)
-            write.table(adj, file = paste0(datadir,"/data.tsv"), quote = FALSE,
-                sep = "\t", row.names = FALSE, col.names = FALSE)
-        }
-
-        write_reductions(object,datadir)
-
-        write_clusters(object,datadir)
-
-        createHTML(directory,datadir)
-    }else{
+    if(!inherits(object,"looking4clusters")){
         stop("object: must be a 'looking4clusters' object")
     }
+
+    create_l4c_directory(directory)
+    datadir <- file.path(directory,"data")
+    dir.create(datadir)
+
+    write(object$samples,file=file.path(datadir,"samples.txt"))
+    if(includeData){
+        write_data(object,datadir)
+    }
+
+    write_reductions(object,datadir)
+
+    write_clusters(object,datadir)
+
+    www <- wwwDirectory()
+    file.copy(file.path(www,"css"), directory, recursive=TRUE)
+    file.copy(file.path(www,"js"), directory, recursive=TRUE)
+    file.copy(file.path(www,"font"), directory, recursive=TRUE)
+    file.copy(file.path(www,"images"), directory, recursive=TRUE)
+
+    html <- scan(file = file.path(www, "template.html"), what = character(0),
+        sep = "\n", quiet = TRUE)
+    html <- gsub("<!--name-->", basename(directory), html)
+
+    con <- file(indexfile(directory), "a", encoding = "UTF-8")
+    write(html[seq_len(which(html=="<!--data-->")-1)],con,append=TRUE)
+
+    for(f in dir(datadir)){
+        dat <- scan(file = file.path(datadir,f), what = character(0),
+            sep = "\n", quiet = TRUE)
+        write(c(paste0("<pre class=\"",gsub(".","_",f,fixed=TRUE),"\">"),
+            dat,"</pre>"),con,append=TRUE)
+    }
+
+    write(html[(which(html=="<!--data-->")+1):length(html)],con,append=TRUE)
+    close(con)
+
+    unlink(datadir, recursive = TRUE)
+
+    text <- paste0("The graph has been generated in the \"",
+        normalizePath(directory),"\" path.")
+    message(text)
+    if(interactive()){
+        browseURL(normalizePath(indexfile(directory)))
+    }
+}
+
+write_data <- function(object,datadir){
+    write(object$variables,file=file.path(datadir,"variables.txt"))
+    adj <- adjacency(object$data)
+    adj <- adj[!is.na(adj[,3]),]
+    adj[,3] <- signif(adj[,3],3)
+    write.table(adj, file = file.path(datadir,"data.tsv"), quote = FALSE,
+        sep = "\t", row.names = FALSE, col.names = FALSE)
 }
 
 write_reductions <- function(object,datadir){
     if(length(object$reductions)){
         for(reduction in names(object$reductions)){
             write.table(signif(object$reductions[[reduction]],3),
-                file=paste0(datadir,"/",reduction,".csv"),
+                file=file.path(datadir,paste0(reduction,".csv")),
                 row.names=FALSE,col.names=TRUE,sep=",",quote=FALSE)
         }
         write(names(object$reductions),
-            file=paste0(datadir,"/reductions.txt"))
+            file=file.path(datadir,"reductions.txt"))
     }
 }
 
@@ -251,21 +282,22 @@ write_clusters <- function(object,datadir){
                     return(paste0(as.numeric(x)-1,collapse="|"))
                 }, character(1))
                 write(attr(cluster_data,"optim_cluster"),
-                    file=paste0(datadir,"/",cluster,"_optim_cluster.txt"))
+                    file=file.path(datadir,
+                    paste0(cluster,"_optim_cluster.txt")))
             }
             write.table(data.frame(clusternames, samples),
-                file = paste0(datadir, "/", cluster, ".tsv"),
+                file = file.path(datadir, paste0(cluster, ".tsv")),
                 quote = FALSE, sep = "\t",
                 row.names = FALSE, col.names = FALSE)
         }
-        write(names(object$clusters),file=paste0(datadir,"/clusters.txt"))
+        write(names(object$clusters),file=file.path(datadir,"clusters.txt"))
         if(length(object$options$groupStatsBy)){
             write(object$options$groupStatsBy,
-                file=paste0(datadir,"/groupstatsby.txt"))
+                file=file.path(datadir,"groupstatsby.txt"))
         }
         if(length(object$options$myGroups)){
             write(object$options$myGroups,
-                file=paste0(datadir,"/mygroups.txt"))
+                file=file.path(datadir,"mygroups.txt"))
         }
     }
 }

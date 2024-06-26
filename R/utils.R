@@ -7,45 +7,6 @@ wwwDirectory <- function(){
     return(path)
 }
 
-createHTML <- function(directory, datadir, show = TRUE){
-    if(!file.exists(directory))
-        dir.create(directory)
-
-    www <- wwwDirectory()
-    file.copy(paste0(www,"/css"), directory, recursive=TRUE)
-    file.copy(paste0(www,"/js"), directory, recursive=TRUE)
-    file.copy(paste0(www,"/font"), directory, recursive=TRUE)
-    file.copy(paste0(www,"/images"), directory, recursive=TRUE)
-
-    html <- scan(file = paste0(www, "/template.html"), what = character(0),
-        sep = "\n", quiet = TRUE)
-    html <- gsub("<!--name-->", basename(directory), html)
-
-    con <- file(paste0(directory, "/index.html"), "a", encoding = "UTF-8")
-    write(html[seq_len(which(html=="<!--data-->")-1)],con,append=TRUE)
-
-    for(f in dir(datadir)){
-        dat <- scan(file = paste0(datadir,"/",f), what = character(0),
-            sep = "\n", quiet = TRUE)
-        write(c(paste0("<pre class=\"",gsub(".","_",f,fixed=TRUE),"\">"),
-            dat,"</pre>"),con,append=TRUE)
-    }
-
-    write(html[(which(html=="<!--data-->")+1):length(html)],con,append=TRUE)
-    close(con)
-
-    unlink(datadir, recursive = TRUE)
-
-    text <- paste0("The graph has been generated in the \"",
-        normalizePath(directory),"\" path.")
-    message(text)
-    if(identical(show,TRUE)){
-        if(interactive()){
-            browseURL(normalizePath(paste0(directory,"/index.html")))
-        }
-    }
-}
-
 adjacency <- function(x){
     if(is.numeric(x)){
         source <- rep(seq_len(nrow(x))-1,ncol(x))
@@ -57,4 +18,26 @@ adjacency <- function(x){
 
 clean_names <- function(name){
     return(gsub("[^A-Za-z0-9]","_",name))
+}
+
+indexfile <- function(directory){
+    return(file.path(directory,"index.html"))
+}
+
+create_l4c_directory <- function(directory){
+    if(file.exists(directory)){
+        stoptext <- paste0("directory: '",directory,"' already exists")
+        if(file.exists(indexfile(directory))){
+            content <- scan(file = indexfile(directory), what = character(0),
+                sep = "\n", quiet = TRUE)
+            if(sum(content=="<!-- BioinfoUSAL looking4clusters -->")==1){
+                unlink(directory, recursive = TRUE)
+            }else{
+                stop(stoptext)
+            }
+        }else{
+            stop(stoptext)
+        }
+    }
+    dir.create(directory)
 }
