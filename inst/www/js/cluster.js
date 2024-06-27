@@ -442,7 +442,7 @@ function renderplot(name,data,xlab,ylab,big){
       .style("float","left")
       .on("click",function(){
           div.remove();
-          renderplot(name,dimData[name],xlab,ylab,!big);
+          renderplot(name,data,xlab,ylab,!big);
       })
     }
 
