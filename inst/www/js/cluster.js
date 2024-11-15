@@ -59,18 +59,19 @@ window.onload = function(){
 
       d3.select("div.variableColor > div > button").on("click",variable_color);
 
-      input_autocomplete("search-sample",samples.map(function(d,i){
-        return [i,d];
-      }),function(key){
-        samples.forEach(function(d,i){
-          d[1] = d[1] | key==i;
-        });
-        select_dots();
-      });
     }else{
       d3.select("div.sidebar > div.newGraphs").remove();
       d3.select("div.sidebar > div.variableColor").remove();
     }
+
+    input_autocomplete("search-sample",samples.map(function(d,i){
+        return [i,d];
+    }),function(key){
+        samples.forEach(function(d,i){
+          d[1] = d[1] | key==i;
+        });
+        select_dots();
+    });
 
     samples = samples.map(function(d){
         return [d,false,defaultColor,defaultShape];
