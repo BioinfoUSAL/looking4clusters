@@ -1,4 +1,4 @@
-getClusters <- function(data, groups = NULL, components = FALSE,
+l4c <- function(data, groups = NULL, components = FALSE,
     distance = "euclidean", agglomeration = "complete", selectedk = NULL,
     perplex = 30, maxIter = 1000, threads = NULL, force_execution = FALSE){
 
@@ -193,7 +193,7 @@ add_cluster <- function(object, data, name=NULL, groupStatsBy=FALSE,
     return(object)
 }
 
-display_html <- function(object, includeData = TRUE, directory = tempfile()){
+display_html <- function(object, includeData = FALSE, directory = tempfile()){
     if(!inherits(object,"looking4clusters")){
         stop("object: must be a 'looking4clusters' object")
     }
@@ -303,7 +303,7 @@ write_clusters <- function(object,datadir){
 }
 
 plot.looking4clusters <- function(x,
-        includeData = TRUE, directory = tempfile(), ...){
+        includeData = FALSE, directory = tempfile(), ...){
     display_html(x,includeData,directory)
 }
 

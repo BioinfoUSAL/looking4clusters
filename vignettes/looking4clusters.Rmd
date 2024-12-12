@@ -59,7 +59,7 @@ sce <- ReprocessedAllenData("tophat_counts")
 counts <- t(assays(sce)$tophat_counts)
 
 # Perform dimensional reduction and an automatic cluster identification
-obj <- getClusters(counts, groups=colData(sce)[,'dissection_s'])
+obj <- l4c(counts, groups=colData(sce)[,'dissection_s'])
 
 # Output interactive visualization
 plot(obj)
@@ -119,7 +119,7 @@ seurat_object <- RunPCA(seurat_object,
     features = VariableFeatures(object = seurat_object))
 
 # Create a looking4clusters object from a Seurat object
-obj <- getSeuratClusters(seurat_object)
+obj <- l4c_Seurat(seurat_object)
 
 # Output interactive visualization
 plot(obj)

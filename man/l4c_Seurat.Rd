@@ -1,5 +1,5 @@
-\name{getSeuratClusters}
-\alias{getSeuratClusters}
+\name{l4c_Seurat}
+\alias{l4c_Seurat}
 \title{Clustering determination and visualization}
 \author{
 David Barrios, Angela Villaverde and Carlos Prieto. Bioinformatics Service of
@@ -10,7 +10,7 @@ Object of class \code{looking4clusters}.
 }
 
 \usage{
-getSeuratClusters(object, assay = NULL)
+l4c_Seurat(object, assay = NULL)
 }
 \arguments{
 \item{object}{A \code{Seurat} object.}
@@ -18,7 +18,7 @@ getSeuratClusters(object, assay = NULL)
 default assay.}
 }
 \description{
-\code{getSeuratClusters} Creates interactive clustering visualization plots
+\code{l4c_Seurat} Creates interactive clustering visualization plots
 from a \code{Seurat} object.
 }
 \examples{
@@ -36,7 +36,7 @@ seurat_object <- FindVariableFeatures(seurat_object)
 seurat_object <- RunPCA(seurat_object, npcs = 2,
     features = VariableFeatures(object = seurat_object))
 
-obj <- getSeuratClusters(seurat_object)
+obj <- l4c_Seurat(seurat_object)
 
 plot(obj)
 }

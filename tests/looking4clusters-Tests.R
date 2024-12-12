@@ -8,7 +8,7 @@ object <- add_reduction(object,pca,"pca")
 display_html(object)
 
 # get clusters (auto)
-obj <- getClusters(iris[,1:4], groups=iris[,5])
+obj <- l4c(iris[,1:4], groups=iris[,5])
 print(object)
 
 # single-cell RNAseq
@@ -16,7 +16,7 @@ library(scRNAseq)
 sce <- ReprocessedAllenData("tophat_counts")
 counts <- t(assays(sce)$tophat_counts)
 
-obj <- getClusters(counts, groups=colData(sce)[,'dissection_s'],
+obj <- l4c(counts, groups=colData(sce)[,'dissection_s'],
     components=TRUE)
 plot(obj)
 
@@ -40,17 +40,17 @@ seurat_object <- FindVariableFeatures(seurat_object)
 seurat_object <- RunPCA(seurat_object, npcs = 2,
     features = VariableFeatures(object = seurat_object))
 
-obj <- getSeuratClusters(seurat_object,assay="all")
+obj <- l4c_Seurat(seurat_object,assay="all")
 
 # all 0 column
 wrongmat <- matrix(c(0,0,0,0,1,3,3,2,1,2,2,1),4)
-obj <- getClusters(wrongmat)
+obj <- l4c(wrongmat)
 
 # all 0 row
 wrongmat <- matrix(c(0,1,1,1,0,3,3,2,0,2,2,1),4)
-obj <- getClusters(wrongmat)
+obj <- l4c(wrongmat)
 
 # negative entries
 wrongmat <- matrix(c(3,1,1,1,3,-1,-1,2,3,2,2,1),4)
-obj <- getClusters(wrongmat)
+obj <- l4c(wrongmat)
 

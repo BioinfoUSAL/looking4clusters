@@ -1,7 +1,7 @@
 Package: looking4clusters
 Type: Package
 Version: 0.99.0
-Date: 2024-06-14
+Date: 2024-12-12
 Title: Interactive visualization of scRNA-seq
 Description: Interactive visualization of dimensional reduction, clustering and cell properties for scRNA-Seq data analysis.
 License: GPL-2 | GPL-3

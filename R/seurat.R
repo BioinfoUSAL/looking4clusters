@@ -1,4 +1,4 @@
-getSeuratClusters <- function(object, assay = NULL){
+l4c_Seurat <- function(object, assay = NULL){
     if(!installed("Seurat")){
         stop("Install 'Seurat' to use this function.")
     }

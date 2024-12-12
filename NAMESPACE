@@ -1,5 +1,5 @@
-export(getClusters)
-export(getSeuratClusters)
+export(l4c)
+export(l4c_Seurat)
 export(create_l4c)
 export(add_reduction)
 export(add_cluster)

@@ -22,7 +22,7 @@ library(scRNAseq)
 sce <- ReprocessedAllenData("tophat_counts")
 counts <- t(assays(sce)$tophat_counts)
 
-obj <- getClusters(counts, groups=colData(sce)[,'dissection_s'])
+obj <- l4c(counts, groups=colData(sce)[,'dissection_s'])
 plot(obj)
 ```
 

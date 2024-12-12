@@ -15,7 +15,7 @@ opened with your browser.
 }
 
 \usage{
-display_html(object, includeData = TRUE, directory = tempfile())
+display_html(object, includeData = FALSE, directory = tempfile())
 }
 \arguments{
 \item{object}{A \code{looking4cluster} object.}

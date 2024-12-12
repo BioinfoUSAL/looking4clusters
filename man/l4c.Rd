@@ -1,5 +1,5 @@
-\name{getClusters}
-\alias{getClusters}
+\name{l4c}
+\alias{l4c}
 \title{Clustering determination and visualization}
 \author{
 David Barrios, Angela Villaverde and Carlos Prieto. Bioinformatics Service of
@@ -10,7 +10,7 @@ Object of class \code{looking4clusters}.
 }
 
 \usage{
-getClusters(data, groups = NULL, components = FALSE,
+l4c(data, groups = NULL, components = FALSE,
     distance = "euclidean", agglomeration = "complete", selectedk = NULL,
     perplex = 30, maxIter = 1000, threads = NULL, force_execution = FALSE)
 }
@@ -44,10 +44,10 @@ Default value is the amount of CPU cores available on the system.}
 performance problems with large matrices.}
 }
 \description{
-\code{getClusters} Applies dimension reduction and clustering techniques and
+\code{l4c} Applies dimension reduction and clustering techniques and
 creates interactive clustering visualization plots with 'R'.
 }
 \examples{
-obj <- getClusters(iris[,1:4], groups=iris[,5], threads = 2)
+obj <- l4c(iris[,1:4], groups=iris[,5], threads = 2)
 plot(obj)
 }
