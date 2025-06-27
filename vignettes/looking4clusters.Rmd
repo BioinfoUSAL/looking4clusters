@@ -11,15 +11,11 @@ vignette: >
 
 # Getting started
 
-`looking4clusters` is an R package distributed as part of the Bioconductor
-project.
+`looking4clusters` is an R package distributed as part of CRAN.
 To install the package, start R and enter:
 
 ```{r , echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-if (!requireNamespace("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
-}
-BiocManager::install("looking4clusters")
+install.packages("looking4clusters")
 ```
 The GitHub repository for `looking4clusters` is
 https://github.com/BioinfoUSAL/looking4clusters.

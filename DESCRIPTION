@@ -1,9 +1,24 @@
 Package: looking4clusters
 Type: Package
-Version: 0.99.0
+Version: 1.0.0
 Date: 2024-12-12
-Title: Interactive visualization of scRNA-seq
-Description: Interactive visualization of dimensional reduction, clustering and cell properties for scRNA-Seq data analysis.
+Title: Interactive Visualization of scRNA-Seq
+Description: Enables the interactive visualization of dimensional
+    reduction, clustering, and cell properties for scRNA-Seq results. It
+    generates an interactive HTML page using either a numeric matrix or a
+    Seurat object as input. The input data can be projected into
+    two-dimensional representations by applying dimensionality reduction
+    methods such as PCA, MDS, t-SNE, UMAP, and NMF. Displaying multiple
+    dimensionality reduction results within the same interface, with
+    interconnected graphs, provides different perspectives that
+    facilitate accurate cell classification. The package also integrates
+    unsupervised clustering techniques, whose results that can be viewed
+    interactively in the graphical interface. In addition to
+    visualization, this interface allows manual selection of groups,
+    labeling of cell entities based on processed meta-information,
+    generation of new graphs displaying gene expression values for each
+    cell, sample identification, and visual comparison of samples and
+    clusters.
 License: GPL-2 | GPL-3
 Depends: R (>= 4.3.0)
 Imports: stats, utils
@@ -11,8 +26,6 @@ Suggests: knitr, rmarkdown, Seurat, parallelDist, uwot, NMF, fpc,
         dendextend, cluster, Rtsne, scRNAseq, Matrix
 VignetteBuilder: knitr
 NeedsCompilation: no
-biocViews: Software, Visualization, DataRepresentation, Clustering,
-        DimensionReduction
 BugReports: https://github.com/BioinfoUSAL/looking4clusters/issues/
 URL: https://github.com/BioinfoUSAL/looking4clusters/
 Authors@R: c( 

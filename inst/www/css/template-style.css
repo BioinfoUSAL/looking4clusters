@@ -1155,6 +1155,7 @@ input, textarea, select {
   background: rgba(0, 0, 0, 0.03) none repeat scroll 0 0;
   border: 1px solid rgba(0, 0, 0, 0.14);
   font-size: 12px;
+  font-family: 'Open Sans',Arial,Helvetica,sans-serif;
   padding: 0.625rem;
   width: 100%;
 }
@@ -2479,9 +2480,12 @@ ul.autocomplete-list li:hover, ul.autocomplete-list li.active {
 }
 
 input.variable-input,
-.sidebar > div > select {
+.sidebar > div > select,
+.sidebar > div > div > .multi-search {
   width: 80%;
   margin-bottom: 10px;
+  display: inline-block;
+  vertical-align: top;
 }
 
 i[class^="icon"]{
@@ -2584,4 +2588,77 @@ ul.selected-samples i.icon-cross_mark {
   padding: 8px 10px 8px 0;
   margin: 2px 2px 0 0;
   cursor: pointer;
+}
+
+/* multi search */
+.multi-search {
+  position: relative;
+  padding: 0;
+  border: none;
+  margin: 0;
+  font-size: 12px;
+  height: 39.2px;
+}
+.multi-search > .search-box {
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  background: #f7f7f7 none repeat scroll 0 0;
+  border: 1px solid #dbdbdb;
+  height: 100%;
+}
+.multi-search > .search-box > div.check-container {
+  position: absolute;
+  margin-top: 10px;
+  height: 20px;
+  width: 20px;
+  overflow: hidden;
+}
+.multi-search > .search-box > div.check-container > span {
+  display: block;
+  height: 24px;
+}
+.multi-search > .search-box > div.check-container > span.yes:after {
+  content: "";
+  display: block;
+  margin: 0 0 0 6px;
+  width: 4px;
+  height: 8px;
+  border: solid #000000;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.multi-search > .search-box > div.text-wrapper {
+  padding: 0.625rem;
+  padding-left: 20px;
+  line-height: 2;
+}
+.multi-search > .search-box > div.text-wrapper > div.text-content {
+  overflow: hidden;
+}
+.multi-search > .search-box > div.text-wrapper > div.text-content > textarea {
+  height: 25px;
+  line-height: 2;
+  width: 99999px;
+  border: none;
+  margin: 0;
+  padding: 0;
+  resize: none;
+  background: none;
+}
+.multi-search > .search-box.focused {
+  height: unset;
+}
+.multi-search > .search-box.focused > div.text-wrapper > div.text-content > textarea {
+  height: 300px;
+}
+.multi-search > .search-box.focused > div.check-container {
+  height: 300px;
+}
+.multi-search:after {
+  content: '';
+  display: block;
+  clear: both;
 }

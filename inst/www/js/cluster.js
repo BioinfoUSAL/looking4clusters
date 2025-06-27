@@ -15,7 +15,9 @@ var samples = false,
     savedShapes = {},
     groupStatsBy = [],
     groupby = false,
-    groupbyColorscale = d3.scale.ordinal().range(colorList);
+    groupbyColorscale = d3.scale.ordinal().range(colorList),
+    heatmap = [],
+    violin = -1;
 
 var myGroups = {};
 
@@ -51,17 +53,20 @@ window.onload = function(){
 
     if(variables){
       d3.selectAll("input.variable-input").property("value","");
-      for(var i = 1; i<=3; i++){
-        input_autocomplete("input-variable"+i,variables.map(function(d,i){ return [i,d]; }));
-      }
+      [1,2,3,5].forEach(function(j){
+        input_autocomplete("input-variable"+j,variables.map(function(d,i){ return [i,d]; }));
+      });
+      input_multisearch("input-variable4",variables.map(function(d,i){ return [i,d]; }));
 
       d3.select("div.newGraphs > div > button").on("click",new_graph);
-
       d3.select("div.variableColor > div > button").on("click",variable_color);
-
+      d3.select("div.variableHeatmap > div > button").on("click",variable_heatmap);
+      d3.select("div.variableViolin > div > button").on("click",variable_violin);
     }else{
       d3.select("div.sidebar > div.newGraphs").remove();
       d3.select("div.sidebar > div.variableColor").remove();
+      d3.select("div.sidebar > div.variableHeatmap").remove();
+      d3.select("div.sidebar > div.variableViolin").remove();
     }
 
     input_autocomplete("search-sample",samples.map(function(d,i){
@@ -273,6 +278,34 @@ function variable_color(){
     d3.select("div.variableColor > div > input").attr("key",null).property("value","");
 }
 
+function variable_heatmap(){
+    if(samples){   
+      var variable = d3.select("#input-variable4").attr("key");
+      if(variable===null){
+        alert("Variable is missing!");
+      }else{
+        heatmap = variable.split(",").map(function(d){ return +d; });
+        renderheatmap();
+      }
+    }else
+      alert("Wait until samples are loaded.");
+    d3.select("div.variableHeatmap > div > input").attr("key",null).property("value","");
+}
+
+function variable_violin(){
+    if(samples){   
+      var variable = d3.select("#input-variable5").attr("key");
+      if(variable===null){
+        alert("Variable is missing!");
+      }else{
+        violin = +variable;
+        renderviolin();
+      }
+    }else
+      alert("Wait until samples are loaded.");
+    d3.select("div.variableViolin > div > input").attr("key",null).property("value","");
+}
+
 function new_group(){
   if(samples){
     var input = d3.select("div.myGroups").insert("input","div.myGroups > ul")
@@ -392,7 +425,7 @@ function renderplot(name,data,xlab,ylab,big){
   var sanitized_name = sanitize_names(name);
 
   var margin = {top: 30, right: 20, bottom: 40, left: 50},
-    tWidth = big ? plotSize*2 : plotSize,
+    tWidth = getPlotWidth(big),
     tHeight = tWidth,
     width = tWidth - margin.left - margin.right,
     height = tHeight - margin.top - margin.bottom;
@@ -725,6 +758,277 @@ var lasso_end = function() {
         else
           g.on('.zoom', null);
   }
+}
+
+function renderviolin(){
+  if(violin==-1){
+    return;
+  }
+
+  var name = variables[violin],
+      slug = sanitize_names(name),
+      xlab = "",
+      ylab = "counts";
+
+  var yDom = [0,-Infinity];
+
+  var data = {},
+      data1 = samples.map(function(){ return 0; });
+  table.forEach(function(dd){
+    if(dd[1]==violin){
+      data1[dd[0]] = dd[2];
+      if(dd[2]>yDom[1]){
+        yDom[1] = dd[2];
+      }
+    }
+  });
+  d3.keys(myGroups).sort().forEach(function(d){
+        if(myGroups[d].length){
+          var subdata = myGroups[d].map(function(dd){
+            return data1[dd];
+          });
+          data[d] = subdata;
+        }
+  });
+
+  var margin = {top: 30, right: 20, bottom: 40, left: 50},
+    tWidth = getPlotWidth(true),
+    tHeight = tWidth,
+    width = tWidth - margin.left - margin.right,
+    height = tHeight - margin.top - margin.bottom;
+
+  var plots = d3.select("div.plots"),
+      div = plots.select("div.violin-"+slug);
+
+  if(!div.empty()){
+    div.remove();
+  }
+
+  div = plots.insert('div', ':first-child');
+
+  div.attr("class","div-plot violin-"+slug)
+
+  var h4 = div.append("h4")
+       .attr("class","margin-bottom-0 margin-top-15 text-center")
+  h4.append("span")
+      .text(name)
+
+  div.select("h4").insert("i",":first-child")
+      .attr("class","icon-cross_mark text-primary")
+      .attr("title","remove this plot")
+      .style("float","left")
+      .on("click",function(){
+        div.remove();
+      })
+
+  var x = d3.scale.ordinal()
+    .rangeRoundBands([0, width], .1);
+
+  var y = d3.scale.linear()
+    .range([height, 0]);
+
+  var xAxis = d3.svg.axis()
+    .scale(x)
+    .innerTickSize(-height)
+    .outerTickSize(0)
+    .tickPadding(10)
+    .orient("bottom");
+
+  var yAxis = d3.svg.axis()
+    .scale(y)
+    .tickFormat(formatter)
+    .innerTickSize(-width)
+    .outerTickSize(0)
+    .tickPadding(10)
+    .orient("left");
+
+  var svg = div.append("svg")
+    .attr("width", tWidth)
+    .attr("height", tHeight)
+
+  var g = svg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  var ylen = yDom[1] - yDom[0];
+
+  yDom[0] = (yDom[0]-(ylen/50));
+  yDom[1] = (yDom[1]+(ylen/50));
+
+  x.domain(d3.keys(data))
+  y.domain(yDom)
+
+  var gX = g.append("g")
+      .attr("class", "x axis grid")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+
+  gX.selectAll(".tick text")
+	  .attr("x", 6)
+	  .attr("y", 6)
+	  .attr("transform", "rotate(45)")
+	  .style("text-anchor", "start")
+
+  gX.append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -2)
+      .style("text-anchor", "end")
+      .text(xlab);
+
+  var gY = g.append("g")
+      .attr("class", "y axis grid")
+      .call(yAxis)
+
+  gY.append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("x", 0)
+      .attr("y", 2)
+      .attr("dy", ".80em")
+      .style("text-anchor", "end")
+      .text(ylab)
+
+  var histogram = d3.layout.histogram()
+        .bins(y.ticks(20))
+        .value(function(d){ return d; })
+
+  var sumstat = [],
+      maxNum = 0;
+  for(var k in data){
+    var hist = histogram(data[k]);
+    sumstat.push({key: k, value: hist}); 
+    var longuest = d3.max(hist.map(function(d){ return d.length; }));
+    if (longuest > maxNum){
+      maxNum = longuest;
+    }
+  }
+
+  var xNum = d3.scale.linear()
+    .range([0, x.rangeBand()])
+    .domain([-maxNum,maxNum])
+
+  var groupColors = [];
+  d3.selectAll(".myGroups > ul > li > svg > path").each(function(){
+    groupColors.push(d3.select(this).style("fill"));
+  });
+  console.log(groupColors);
+
+  g.selectAll("groupviolin")
+    .data(sumstat)
+    .enter()
+    .append("g")
+      .attr("class","groupviolin")
+      .attr("transform", function(d){ return("translate(" + x(d.key) +" ,0)") } )
+      .append("path")
+        .datum(function(d){ return(d.value)})
+        .style("stroke", "none")
+        .style("fill",function(d,i){
+          return groupColors[i];
+        })
+        .attr("d", d3.svg.area()
+            .x0(function(d){ return(xNum(-d.length)) } )
+            .x1(function(d){ return(xNum(d.length)) } )
+            .y(function(d){ return(y(d.x)) } )
+            .interpolate("cardinal")
+        )
+}
+
+function renderheatmap(){
+  var plots = d3.select("div.plots"),
+      div = plots.select("div.heatmap");
+
+  if(!div.empty()){
+    div.remove();
+  }
+
+  if(!heatmap.length || !table){
+    return;
+  }
+
+  var heatmapVariables = heatmap;
+
+  var margin = {top: 40, right: 0, bottom: 0, left: 60},
+    tWidth = getPlotWidth(true),
+    tHeight = tWidth;
+
+  div = plots.insert('div', ':first-child');
+
+  div.attr("class","div-plot heatmap")
+
+  var h4 = div.append("h4")
+       .attr("class","margin-bottom-0 margin-top-15 text-center")
+  h4.append("span")
+      .text("heatmap")
+
+  div.select("h4").insert("i",":first-child")
+      .attr("class","icon-cross_mark text-primary")
+      .attr("title","remove this plot")
+      .style("float","left")
+      .on("click",function(){
+        div.remove();
+      })
+
+  var canvas = div.append("canvas")
+     .attr("width",tWidth)
+     .attr("height",tHeight)
+
+  var ctx = canvas.node().getContext("2d");
+  ctx.clearRect(0, 0, tWidth, tHeight);
+
+  var subtable = table.filter(function(d){
+    return heatmapVariables.indexOf(+d[1])!=-1;
+  });
+
+  var colors = d3.scale.linear()
+    .range(["#dc3912","#3366cc"])
+    .domain(d3.extent(subtable,function(d){ return +d[2]; }))
+
+  var ydomain = heatmapVariables.sort();
+
+  var x = d3.scale.linear()
+    .range([margin.left,tWidth-margin.right])
+    .domain([0,samples.length])
+
+  var y = d3.scale.ordinal()
+    .rangeBands([margin.top,tHeight-margin.bottom])
+    .domain(ydomain)
+
+  subtable.forEach(function(d){
+      ctx.beginPath();    
+      ctx.fillStyle = colors(+d[2]);
+      ctx.rect(x(+d[0]), y(+d[1]), x(1), y.rangeBand());
+      ctx.fill();
+  })
+
+  var grd = ctx.createLinearGradient(tWidth/2,0,tWidth,0);
+  grd.addColorStop(0,colors.range()[0]);
+  grd.addColorStop(1,colors.range()[1]);
+
+  ctx.fillStyle = grd;
+  ctx.fillRect(tWidth/2, 10, tWidth/2, 10);
+
+  ctx.fillStyle = "#000000";
+  ctx.font = "10px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(String(colors.domain()[0]),tWidth/2,29);
+  ctx.textAlign = "right";
+  ctx.fillText(String(colors.domain()[1]),tWidth,29);
+
+  heatmapVariables.forEach(function(d,i){
+    ctx.fillText(variables[d],margin.left-2,y(d)+(y.rangeBand()/2)+6);
+  });
+
+  samples.forEach(function(s,i){
+      ctx.beginPath();
+      ctx.fillStyle = s[2];
+      ctx.rect(x(i), margin.top-10, x(1), 10);
+      ctx.fill();
+  });
+}
+
+function getPlotWidth(big){
+  var plotsWidth = d3.select("div.plots").node().getBoundingClientRect().width-8;
+  return d3.min([plotsWidth,plotSize*(big?2:1)]);
 }
 
 function renderColorScale(div,colors){
@@ -1119,6 +1423,8 @@ function update_color(){
   d3.selectAll("div.plots .dot").style("fill",function(d){
     return samples[d.index][2];
   })
+  renderheatmap();
+  renderviolin();
 }
 
 function update_shape(){
@@ -1142,8 +1448,6 @@ function reset_shape_legends(){
 function vis_and_bullet(li,name,data){
   var color = li.style("color"),
       shape = defaultShape;
-
-  name = name;
 
   if(savedColors.hasOwnProperty(name)){
     color = savedColors[name];
@@ -1363,6 +1667,78 @@ function search_pattern_keydown(){
     select_dots();
     self.property("value","");
   }
+}
+
+function input_multisearch(id,wordlist){
+    var input = d3.select("#"+id).style("display","none");
+
+    var searchSel = d3.select(input.node().parentNode).insert("div","#"+id)
+        .attr("class","multi-search");
+
+    var searchBox = searchSel.append("div")
+      .attr("class","search-box")
+
+    var checkContainer = searchBox.append("div")
+      .attr("class","check-container")
+
+    var typingTimer;
+    var typingInterval = wordlist.length>1000 ? 1000 : 500; 
+
+    var searchBoxInput = searchBox.append("div")
+      .attr("class","text-wrapper")
+      .on("click",function(){
+        searchBoxInput.node().focus();
+      })
+      .append("div")
+      .attr("class","text-content")
+      .append("textarea")
+        .attr("placeholder","Write variable names...")
+        .on("focus",function(){
+          searchBox.classed("focused",true);
+        })
+        .on("blur",function(){
+          searchBox.classed("focused",false);
+        })
+        .on("keydown",function(){
+          clearTimeout(typingTimer);
+        })
+        .on("keyup",function(){
+          clearTimeout(typingTimer);
+          if(d3.event.keyCode === 13){
+            d3.event.stopPropagation();
+          }
+          if([37,38,39,40].indexOf(d3.event.keyCode)!=-1){
+            return;
+          }
+          
+          typingTimer = setTimeout(doneTyping, typingInterval);
+        })
+
+    function doneTyping () {
+          var cutoff = wordlist.length>1000 ? 3 : 1,
+              values = searchBoxInput.property("value").split("\n").filter(function(d){
+                return d.length>=cutoff;
+              });
+
+          checkContainer.selectAll("span").remove();
+          if(values.length){
+            var valid = [];
+            values.forEach(function(value){
+              var found = false;
+              value = new RegExp(value,'i');
+              wordlist.forEach(function(word){
+                if(String(word[1]).match(value)){
+                  found = true;
+                  valid.push(word[0]);
+                }
+              });
+              checkContainer.append("span")
+                .attr("class",found ? "yes": "no")
+            });
+
+            input.attr("key",valid.length ? valid.join(",") : null);
+          }
+    }
 }
 
 function getCluster(name){
