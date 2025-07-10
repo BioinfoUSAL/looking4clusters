@@ -21,9 +21,9 @@ Description: Enables the interactive visualization of dimensional
     clusters.
 License: GPL-2 | GPL-3
 Depends: R (>= 4.5.0)
-Imports: stats, utils
-Suggests: knitr, rmarkdown, Seurat, parallelDist, uwot, NMF, fpc,
-        dendextend, cluster, Rtsne, scRNAseq, Matrix
+Imports: stats, utils, SummarizedExperiment, SingleCellExperiment
+Suggests: knitr, rmarkdown, Seurat, parallelDist, uwot, NMF, fpc, dendextend,
+    cluster, Rtsne, scRNAseq, Matrix
 VignetteBuilder: knitr
 NeedsCompilation: no
 biocViews: Software, Visualization, DataRepresentation,

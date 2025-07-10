@@ -15,7 +15,9 @@ vignette: >
 To install the package, start R and enter:
 
 ```{r , echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
-install.packages("looking4clusters")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("looking4clusters")
 ```
 The GitHub repository for `looking4clusters` is
 https://github.com/BioinfoUSAL/looking4clusters.
@@ -52,10 +54,10 @@ Object.
 # Load sample data from scRNAseq package
 library(scRNAseq)
 sce <- ReprocessedAllenData("tophat_counts")
-counts <- t(assays(sce)$tophat_counts)
+counts <- assay(sce, "tophat_counts")
 
 # Perform dimensional reduction and an automatic cluster identification
-obj <- l4c(counts, groups=colData(sce)[,'dissection_s'])
+obj <- l4c(t(counts), groups=colData(sce)[,'dissection_s'])
 
 # Output interactive visualization
 plot(obj)
@@ -69,15 +71,23 @@ Alternatively you can iniltialize an object and then add clusters and
 reductions
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Create a new looking for cluster object
-obj <- create_l4c(counts)
+obj <- create_l4c(t(counts))
 
 # Add a sample clasification from input data
 groups <- colData(sce)[,'dissection_s']
 obj <- add_cluster(obj, groups, myGroups=TRUE)
 
-# Perform a PCA and add to the object as a dimensional reduction layout
-pca <- prcomp(counts,scale=FALSE)
-obj <- add_reduction(obj, pca$x[,1:2], "PCA")
+# Perform a PCA and TSNE and add to the object as a dimensional reduction layout
+libsizes <- colSums(counts)
+size.factors <- libsizes/mean(libsizes)
+logcounts(sce) <- log2(t(t(counts)/size.factors) + 1)
+
+pca_data <- prcomp(t(logcounts(sce)), rank=50)
+obj <- add_reduction(obj, pca_data$x[,1:2], "PCA")
+
+library(Rtsne)
+tsne_data <- Rtsne(pca_data$x[,1:50], pca = FALSE)
+obj <- add_reduction(obj, tsne_data$Y, "TSNE")
 
 # Output interactive visualization
 plot(obj)
@@ -85,6 +95,22 @@ plot(obj)
 
 ```{r echo=FALSE, out.width='100%'}
 knitr::include_graphics("manual.png")
+```
+
+# Interactive visualization from a SingleCellExperiment Object
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+# Adding PCA and TSNE to the object
+reducedDims(sce) <- list(PCA=pca_data$x, TSNE=tsne_data$Y)
+
+# Create a looking4clusters object from a SingleCellExperiment object
+obj <- l4c_SCE(sce, groups="dissection_s")
+
+# Output interactive visualization
+plot(obj)
+```
+
+```{r echo=FALSE, out.width='100%'}
+knitr::include_graphics("sce.png")
 ```
 
 # Interactive visualization from a Seurat Object

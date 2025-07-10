@@ -14,11 +14,22 @@ print(object)
 # single-cell RNAseq
 library(scRNAseq)
 sce <- ReprocessedAllenData("tophat_counts")
-counts <- t(assays(sce)$tophat_counts)
+counts <- assay(sce, "tophat_counts")
 
-obj <- l4c(counts, groups=colData(sce)[,'dissection_s'],
+obj <- l4c(t(counts), groups=colData(sce)[,'dissection_s'],
     components=TRUE)
-plot(obj)
+plot(obj, includeData=TRUE)
+
+# SingleCellExperiment
+libsizes <- colSums(counts)
+size.factors <- libsizes/mean(libsizes)
+logcounts(sce) <- log2(t(t(counts)/size.factors) + 1)
+
+pca_data <- prcomp(t(logcounts(sce)), rank=50)
+
+reducedDims(sce) <- list(PCA=pca_data$x)
+
+obj <- l4c_SCE(sce, groups="dissection_s")
 
 # seurat
 library(Seurat)
