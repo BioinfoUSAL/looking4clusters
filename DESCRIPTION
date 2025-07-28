@@ -1,6 +1,6 @@
 Package: looking4clusters
 Type: Package
-Version: 0.99.0
+Version: 0.99.1
 Date: 2025-06-30
 Title: Interactive Visualization of scRNA-Seq
 Description: Enables the interactive visualization of dimensional
@@ -31,7 +31,7 @@ biocViews: Software, Visualization, DataRepresentation,
 BugReports: https://github.com/BioinfoUSAL/looking4clusters/issues/
 URL: https://github.com/BioinfoUSAL/looking4clusters/
 Authors@R: c( 
-    person("David", "Barrios", email = c("bioinfo@usal.es","metal@usal.es"), role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4465-0200")),
+    person("David", "Barrios", email = "metal@usal.es", role = c("aut", "cre"), comment = c(ORCID = "0000-0003-4465-0200")),
     person("Angela", "Villaverde", email = "angelavr@usal.es", role = "aut", comment = c(ORCID = "0000-0002-7337-7218")),
     person("Carlos", "Prieto", email = "cprietos@usal.es", role = "aut", comment = c(ORCID = "0000-0001-8178-9768"))
     )
