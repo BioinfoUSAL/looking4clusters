@@ -1,8 +1,8 @@
-\name{add_cluster}
-\alias{add_cluster}
+\name{addcluster}
+\alias{addcluster}
 \title{Clustering determination and visualization}
 \description{
-\code{add_cluster} adds a dimensional reduction to a \code{looking4cluster}
+\code{addcluster} adds a dimensional reduction to a \code{looking4cluster}
 object.
 }
 \author{
@@ -14,7 +14,7 @@ Object of class \code{looking4clusters}.
 }
 
 \usage{
-add_cluster(object, data, name=NULL, groupStatsBy=FALSE,
+addcluster(object, data, name=NULL, groupStatsBy=FALSE,
     myGroups=FALSE, optim_cluster=FALSE)
 }
 \arguments{
@@ -28,6 +28,6 @@ groups}
 method, this will be the default.}
 }
 \examples{
-object <- create_l4c(iris[,1:4])
-object <- add_cluster(object,iris[,5],"species",myGroups=TRUE)
+object <- looking4clusters(iris[,1:4], running_all=FALSE)
+object <- addcluster(object,iris[,5],"species",myGroups=TRUE)
 }

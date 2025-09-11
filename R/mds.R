@@ -17,5 +17,5 @@ run_mds <- function(object,threads=NULL){
     cmds <- cmdscale(distMatrix, k=2)
     colnames(cmds) <- c("cMDS1","cMDS2")
 
-    return(add_reduction(object,cmds,"cmds"))
+    return(addreduction(object,cmds,"cmds"))
 }

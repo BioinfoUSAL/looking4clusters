@@ -1,9 +1,4 @@
 l4c_SCE <- function(object, groups = NULL, assay = NULL){
-
-    if(!inherits(object,"SingleCellExperiment")){
-        stop("object: must be a 'SingleCellExperiment' object")
-    }
-
     if(!is.null(assay)){
         data <- t(SummarizedExperiment::assay(object,assay))
     }else{
@@ -16,17 +11,17 @@ l4c_SCE <- function(object, groups = NULL, assay = NULL){
     if(length(rdnames)){
         for(n in rdnames){
             rd <- SingleCellExperiment::reducedDim(object,n)
-            l4cObject <- add_reduction(l4cObject,rd,n)
+            l4cObject <- addreduction(l4cObject,rd,n)
         }
     }
 
     coldata <- SummarizedExperiment::colData(object)
     if(ncol(coldata)){
         if(!is.null(groups)){
-            l4cObject <- add_cluster(l4cObject,coldata[,groups],myGroups=TRUE)
+            l4cObject <- addcluster(l4cObject,coldata[,groups],myGroups=TRUE)
         }
         for(n in colnames(coldata)){
-            l4cObject <- add_cluster(l4cObject, coldata[,n],
+            l4cObject <- addcluster(l4cObject, coldata[,n],
                 name=n, groupStatsBy=TRUE)
         }
     }

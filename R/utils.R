@@ -1,5 +1,5 @@
 installed <- function(pkg){
-    return(requireNamespace(pkg, quietly=TRUE))
+    return(BiocBaseUtils::checkInstalled(pkg))
 }
 
 wwwDirectory <- function(){

@@ -45,7 +45,7 @@ for(i in seq_len(iter)){
     if(length(levels(clusters))==numberClustersKmeans){
         optim_cluster <- TRUE
     }
-    object <- add_cluster(object,clusters,"kmeans",optim_cluster=optim_cluster)
+    object <- addcluster(object,clusters,"kmeans",optim_cluster=optim_cluster)
 }
 
 return(object)

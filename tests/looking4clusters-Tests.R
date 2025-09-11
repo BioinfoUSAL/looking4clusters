@@ -1,14 +1,14 @@
 library(looking4clusters)
 
-object <- create_l4c(iris[,1:4])
-object <- add_cluster(object,iris[,5],"species",myGroups=TRUE)
-PCAcomponents <- prcomp(data.matrix(iris[,1:4]), scale=FALSE)
+object <- looking4clusters(iris[,1:4],running_all=FALSE)
+object <- addcluster(object,iris[,5],"species",myGroups=TRUE)
+PCAcomponents <- prcomp(data.matrix(iris[,1:4]),scale=FALSE)
 pca<-PCAcomponents$x[,1:2]
-object <- add_reduction(object,pca,"pca")
-display_html(object)
+object <- addreduction(object,pca,"pca")
+l4csave(object,"l4c_saved",includeData=TRUE)
 
 # get clusters (auto)
-obj <- l4c(iris[,1:4], groups=iris[,5])
+obj <- looking4clusters(iris[,1:4], groups=iris[,5])
 print(object)
 
 # single-cell RNAseq
@@ -16,7 +16,7 @@ library(scRNAseq)
 sce <- ReprocessedAllenData("tophat_counts")
 counts <- assay(sce, "tophat_counts")
 
-obj <- l4c(t(counts), groups=colData(sce)[,'dissection_s'],
+obj <- looking4clusters(t(counts), groups=colData(sce)[,'dissection_s'],
     components=TRUE)
 plot(obj, includeData=TRUE)
 
@@ -29,7 +29,8 @@ pca_data <- prcomp(t(logcounts(sce)), rank=50)
 
 reducedDims(sce) <- list(PCA=pca_data$x)
 
-obj <- l4c_SCE(sce, groups="dissection_s")
+obj <- looking4clusters(sce, groups="dissection_s")
+l4csave(obj,"l4c_saved")
 
 # seurat
 library(Seurat)
@@ -51,17 +52,17 @@ seurat_object <- FindVariableFeatures(seurat_object)
 seurat_object <- RunPCA(seurat_object, npcs = 2,
     features = VariableFeatures(object = seurat_object))
 
-obj <- l4c_Seurat(seurat_object,assay="all")
+obj <- looking4clusters(seurat_object,assay="all")
 
 # all 0 column
 wrongmat <- matrix(c(0,0,0,0,1,3,3,2,1,2,2,1),4)
-obj <- l4c(wrongmat)
+obj <- looking4clusters(wrongmat)
 
 # all 0 row
 wrongmat <- matrix(c(0,1,1,1,0,3,3,2,0,2,2,1),4)
-obj <- l4c(wrongmat)
+obj <- looking4clusters(wrongmat)
 
 # negative entries
 wrongmat <- matrix(c(3,1,1,1,3,-1,-1,2,3,2,2,1),4)
-obj <- l4c(wrongmat)
+obj <- looking4clusters(wrongmat)
 

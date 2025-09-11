@@ -147,7 +147,7 @@ for(i in seq_len(iter)){
         if(length(levels(clusters))==numberClustersPAM){
             optim_cluster <- TRUE
         }
-        object <- add_cluster(object, clusters,
+        object <- addcluster(object, clusters,
             "pam", optim_cluster = optim_cluster)
     }
     if(length(Hclusters)){
@@ -156,7 +156,7 @@ for(i in seq_len(iter)){
         if(length(levels(clusters))==numberClustersHclust){
             optim_cluster <- TRUE
         }
-        object <- add_cluster(object, clusters, "hclust",
+        object <- addcluster(object, clusters, "hclust",
             optim_cluster = optim_cluster)
     }
 }

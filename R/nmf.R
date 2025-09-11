@@ -9,7 +9,7 @@ run_nmf <- function(object){
                     NMFcomponents <- NMF::nmf(data, rank=2, method="brunet")
                     nmf <- NMF::basis(NMFcomponents)
                     colnames(nmf) <- c("NMF1","NMF2")
-                    object <- add_reduction(object,nmf,"nmf")
+                    object <- addreduction(object,nmf,"nmf")
                 }else{
                     warning(
 "Your data contains some negative entries, this is not supported for nmf."

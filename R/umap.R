@@ -10,7 +10,7 @@ run_umap <- function(object){
         }
         UMAPcomponents <- uwot::umap(data, n_neighbors = n_neighbors)
         colnames(UMAPcomponents) <- c("UMAP1","UMAP2")
-        object <- add_reduction(object,UMAPcomponents,"umap")
+        object <- addreduction(object,UMAPcomponents,"umap")
     }else{
         warning("Install 'uwot' to get umap dimensionality reduction.")
     }

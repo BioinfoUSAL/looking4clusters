@@ -17,7 +17,7 @@ run_tsne <- function(object,perplex=30,maxIter=1000){
             verbose=FALSE, check_duplicates=FALSE, max_iter=maxIter)
         tsne <- tSNEcomponents$Y
         colnames(tsne) <- c("tSNE1","tSNE2")
-        object <- add_reduction(object,tsne,"tsne")
+        object <- addreduction(object,tsne,"tsne")
     }else{
         warning("Install 'Rtsne' to get tsne dimensionality reduction.")
     }

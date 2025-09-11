@@ -65,7 +65,7 @@ seurat_reductions <- function(l4c,object){
         for(reduction in names(object@reductions)){
             mat <- Seurat::Embeddings(object,
                 reduction = reduction)[, seq_len(2)]
-            l4c <- add_reduction(l4c,mat,reduction)
+            l4c <- addreduction(l4c,mat,reduction)
         }
     }
     return(l4c)
@@ -89,7 +89,7 @@ seurat_clusters <- function(l4c,object){
                     length(clusters)!=length(l4c$samples)){
                 next
             }
-            l4c <- add_cluster(l4c, clusters,
+            l4c <- addcluster(l4c, clusters,
                 name=gsub(".","_",name,fixed=TRUE), groupStatsBy=TRUE)
         }
     }

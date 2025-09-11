@@ -19,9 +19,6 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("looking4clusters")
 ```
-The GitHub repository for `looking4clusters` is
-https://github.com/BioinfoUSAL/looking4clusters.
-This is the place to file an issue, report a bug, or provide a pull request.
 
 Once `looking4clusters` is installed, it can be loaded by the following
 command.
@@ -57,7 +54,7 @@ sce <- ReprocessedAllenData("tophat_counts")
 counts <- assay(sce, "tophat_counts")
 
 # Perform dimensional reduction and an automatic cluster identification
-obj <- l4c(t(counts), groups=colData(sce)[,'dissection_s'])
+obj <- looking4clusters(t(counts), groups=colData(sce)[,'dissection_s'])
 
 # Output interactive visualization
 plot(obj)
@@ -71,11 +68,11 @@ Alternatively you can iniltialize an object and then add clusters and
 reductions
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 # Create a new looking for cluster object
-obj <- create_l4c(t(counts))
+obj <- looking4clusters(t(counts), running_all=FALSE)
 
 # Add a sample clasification from input data
 groups <- colData(sce)[,'dissection_s']
-obj <- add_cluster(obj, groups, myGroups=TRUE)
+obj <- addcluster(obj, groups, myGroups=TRUE)
 
 # Perform a PCA and TSNE and add to the object as a dimensional reduction layout
 libsizes <- colSums(counts)
@@ -83,11 +80,11 @@ size.factors <- libsizes/mean(libsizes)
 logcounts(sce) <- log2(t(t(counts)/size.factors) + 1)
 
 pca_data <- prcomp(t(logcounts(sce)), rank=50)
-obj <- add_reduction(obj, pca_data$x[,1:2], "PCA")
+obj <- addreduction(obj, pca_data$x[,1:2], "PCA")
 
 library(Rtsne)
 tsne_data <- Rtsne(pca_data$x[,1:50], pca = FALSE)
-obj <- add_reduction(obj, tsne_data$Y, "TSNE")
+obj <- addreduction(obj, tsne_data$Y, "TSNE")
 
 # Output interactive visualization
 plot(obj)
@@ -103,7 +100,7 @@ knitr::include_graphics("manual.png")
 reducedDims(sce) <- list(PCA=pca_data$x, TSNE=tsne_data$Y)
 
 # Create a looking4clusters object from a SingleCellExperiment object
-obj <- l4c_SCE(sce, groups="dissection_s")
+obj <- looking4clusters(sce, groups="dissection_s")
 
 # Output interactive visualization
 plot(obj)
@@ -141,7 +138,7 @@ seurat_object <- RunPCA(seurat_object,
     features = VariableFeatures(object = seurat_object))
 
 # Create a looking4clusters object from a Seurat object
-obj <- l4c_Seurat(seurat_object)
+obj <- looking4clusters(seurat_object)
 
 # Output interactive visualization
 plot(obj)

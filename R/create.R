@@ -1,4 +1,4 @@
-l4c <- function(data, groups = NULL, components = FALSE,
+l4c <- function(data, groups = NULL, components = FALSE, running_all = TRUE,
     distance = "euclidean", agglomeration = "complete", selectedk = NULL,
     perplex = 30, maxIter = 1000, threads = NULL, force_execution = FALSE){
 
@@ -6,7 +6,7 @@ l4c <- function(data, groups = NULL, components = FALSE,
         stop("data: incorrect dimensions. A matrix like object is required.")
     }
 
-    if(ncol(data) > 5000 || nrow(data) > 5000){
+    if(running_all && (ncol(data) > 5000 || nrow(data) > 5000)){
         if(force_execution){
             message(
 "Too large matrix, could cause performance problems with some methods"
@@ -22,17 +22,22 @@ they will be omitted"
     object <- create_l4c(data,components)
 
     if(!is.null(groups)){
-        object <- add_cluster(object,groups,myGroups=TRUE)
+        object <- addcluster(object,groups,myGroups=TRUE)
     }
 
-    object <- running_all(object, selectedk, data, force_execution, distance,
-        agglomeration, threads, perplex, maxIter)
+    if(running_all){
+        object <- running_clusters(object, selectedk, data, force_execution,
+            distance, agglomeration, threads)
+        object <- running_reductions(object, data, force_execution,
+            threads, perplex, maxIter)
+    }
 
     return(object)
 }
 
-running_all <- function(object, selectedk, data, force_execution, distance,
-        agglomeration, threads, perplex, maxIter){
+running_clusters <- function(object, selectedk, data, force_execution,
+        distance, agglomeration, threads){
+
     message("Running kmeans...")
     object <- run_kmeans(object,selectedk)
     if(force_execution || !(nrow(data) > 5000)){
@@ -40,6 +45,12 @@ running_all <- function(object, selectedk, data, force_execution, distance,
         object <- run_pam_hclust(object, distance, agglomeration,
             selectedk, threads)
     }
+
+    return(object)
+}
+
+running_reductions <- function(object, data, force_execution,
+        threads, perplex, maxIter){
 
     message("Running pca...")
     object <- run_pca(object)
@@ -127,7 +138,7 @@ create_l4c <- function(data,components=FALSE){
         variables=colnames(data), options=list()), class="looking4clusters"))
 }
 
-add_reduction <- function(object, data, name=NULL){
+addreduction <- function(object, data, name=NULL){
     if(!inherits(object,"looking4clusters")){
         stop("object: must be a 'looking4clusters' object")
     }
@@ -146,7 +157,7 @@ add_reduction <- function(object, data, name=NULL){
     return(object)
 }
 
-add_cluster <- function(object, data, name=NULL, groupStatsBy=FALSE,
+addcluster <- function(object, data, name=NULL, groupStatsBy=FALSE,
         myGroups=FALSE, optim_cluster=FALSE){
     if(!inherits(object,"looking4clusters")){
         stop("object: must be a 'looking4clusters' object")
@@ -193,12 +204,11 @@ add_cluster <- function(object, data, name=NULL, groupStatsBy=FALSE,
     return(object)
 }
 
-display_html <- function(object, includeData = FALSE, directory = tempfile()){
+writehtml <- function(object, includeData, directory){
     if(!inherits(object,"looking4clusters")){
         stop("object: must be a 'looking4clusters' object")
     }
 
-    create_l4c_directory(directory)
     datadir <- file.path(directory,"data")
     dir.create(datadir)
 
@@ -235,13 +245,14 @@ display_html <- function(object, includeData = FALSE, directory = tempfile()){
     close(con)
 
     unlink(datadir, recursive = TRUE)
+}
 
+l4csave <- function(object, directory, includeData = FALSE){
+    create_l4c_directory(directory)
+    writehtml(object, includeData, directory)
     text <- paste0("The graph has been generated in the \"",
         normalizePath(directory),"\" path.")
     message(text)
-    if(interactive()){
-        browseURL(normalizePath(indexfile(directory)))
-    }
 }
 
 write_data <- function(object,datadir){
@@ -302,9 +313,13 @@ write_clusters <- function(object,datadir){
     }
 }
 
-plot.looking4clusters <- function(x,
-        includeData = FALSE, directory = tempfile(), ...){
-    display_html(x,includeData,directory)
+plot.looking4clusters <- function(x, includeData = FALSE, ...){
+    if(interactive()){
+        directory <- tempfile()
+        dir.create(directory)
+        writehtml(x, includeData, directory)
+        browseURL(normalizePath(indexfile(directory)))
+    }
 }
 
 print.looking4clusters <- function(x, ...){
@@ -318,5 +333,20 @@ print.looking4clusters <- function(x, ...){
     if(length(x$reductions)){
         cat(paste0(length(x$reductions)," dimensional reductions added: ",
             paste0(names(x$reductions),collapse=", "),"\n"))
+    }
+}
+
+looking4clusters <- function(data, groups = NULL, assay = NULL,
+    components = FALSE, running_all = TRUE, distance = "euclidean",
+    agglomeration = "complete", selectedk = NULL, perplex = 30,
+    maxIter = 1000, threads = NULL, force_execution = FALSE){
+    if(inherits(data,"Seurat")){
+        l4c_Seurat(data, assay)
+    }else if(inherits(data,"SingleCellExperiment")){
+        l4c_SCE(data, groups, assay)
+    }else{
+        l4c(data, groups, components, running_all,
+        distance, agglomeration, selectedk,
+        perplex, maxIter, threads, force_execution)
     }
 }

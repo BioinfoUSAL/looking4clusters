@@ -1,5 +1,5 @@
-\name{l4c}
-\alias{l4c}
+\name{looking4clusters}
+\alias{looking4clusters}
 \title{Clustering determination and visualization}
 \author{
 David Barrios, Angela Villaverde and Carlos Prieto. Bioinformatics Service of
@@ -10,17 +10,23 @@ Object of class \code{looking4clusters}.
 }
 
 \usage{
-l4c(data, groups = NULL, components = FALSE,
-    distance = "euclidean", agglomeration = "complete", selectedk = NULL,
-    perplex = 30, maxIter = 1000, threads = NULL, force_execution = FALSE)
+looking4clusters(data, groups = NULL, assay = NULL,
+    components = FALSE, running_all = TRUE, distance = "euclidean",
+    agglomeration = "complete", selectedk = NULL, perplex = 30,
+    maxIter = 1000, threads = NULL, force_execution = FALSE)
 }
 \arguments{
-\item{data}{input data as a numeric data.frame or matrix where variables are
-placed in columns and samples in rows.}
+\item{data}{A \code{Seurat} or \code{SingleCellExperiment} object.
+Alternatively, a numeric data.frame or matrix where variables are in columns
+and samples are in rows.}
 \item{groups}{Factor/Vector which defines an input category for each sample
 which will be visualized in the output plot.}
+\item{assay}{Specific assay to get data from or set data for; defaults to the
+default assay.}
 \item{components}{If TRUE, clustering algorithms are applied to main components
 obtained with PCA.}
+\item{running_all}{If TRUE, applies dimension reduction and clustering
+techniques if the input is a matrix like object.}
 \item{distance}{the distance measure to be used with hierarchical clustering
 algorithm. This must be one of "euclidean", "maximum", "manhattan", "canberra",
 "binary" or "minkowski". Any unambiguous substring can be given.}
@@ -44,10 +50,11 @@ Default value is the amount of CPU cores available on the system.}
 performance problems with large matrices.}
 }
 \description{
-\code{l4c} Applies dimension reduction and clustering techniques and
-creates interactive clustering visualization plots with 'R'.
+\code{looking4clusters} Creates interactive clustering visualization plots
+from a \code{SingleCellExperiment} object, \code{Seurat} object or a matrix.
+It can also apply dimension reduction and clustering techniques.
 }
 \examples{
-obj <- l4c(iris[,1:4], groups=iris[,5], threads = 2)
+obj <- looking4clusters(iris[,1:4], groups=iris[,5], threads = 2)
 plot(obj)
 }
