@@ -57,7 +57,7 @@ counts <- assay(sce, "tophat_counts")
 obj <- looking4clusters(t(counts), groups=colData(sce)[,'dissection_s'])
 
 # Output interactive visualization
-plot(obj)
+l4chtml(obj)
 ```
 
 ```{r echo=FALSE, out.width='100%'}
@@ -87,7 +87,7 @@ tsne_data <- Rtsne(pca_data$x[,1:50], pca = FALSE)
 obj <- addreduction(obj, tsne_data$Y, "TSNE")
 
 # Output interactive visualization
-plot(obj)
+l4chtml(obj)
 ```
 
 ```{r echo=FALSE, out.width='100%'}
@@ -103,7 +103,7 @@ reducedDims(sce) <- list(PCA=pca_data$x, TSNE=tsne_data$Y)
 obj <- looking4clusters(sce, groups="dissection_s")
 
 # Output interactive visualization
-plot(obj)
+l4chtml(obj)
 ```
 
 ```{r echo=FALSE, out.width='100%'}
@@ -141,7 +141,7 @@ seurat_object <- RunPCA(seurat_object,
 obj <- looking4clusters(seurat_object)
 
 # Output interactive visualization
-plot(obj)
+l4chtml(obj)
 ```
 
 ```{r echo=FALSE, out.width='100%'}

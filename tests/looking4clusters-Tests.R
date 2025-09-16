@@ -5,7 +5,7 @@ object <- addcluster(object,iris[,5],"species",myGroups=TRUE)
 PCAcomponents <- prcomp(data.matrix(iris[,1:4]),scale=FALSE)
 pca<-PCAcomponents$x[,1:2]
 object <- addreduction(object,pca,"pca")
-l4csave(object,"l4c_saved",includeData=TRUE)
+l4chtml(object,includeData=TRUE,directory="l4c_saved")
 
 # get clusters (auto)
 obj <- looking4clusters(iris[,1:4], groups=iris[,5])
@@ -18,7 +18,7 @@ counts <- assay(sce, "tophat_counts")
 
 obj <- looking4clusters(t(counts), groups=colData(sce)[,'dissection_s'],
     components=TRUE)
-plot(obj, includeData=TRUE)
+l4chtml(obj, includeData=TRUE)
 
 # SingleCellExperiment
 libsizes <- colSums(counts)
@@ -30,7 +30,7 @@ pca_data <- prcomp(t(logcounts(sce)), rank=50)
 reducedDims(sce) <- list(PCA=pca_data$x)
 
 obj <- looking4clusters(sce, groups="dissection_s")
-l4csave(obj,"l4c_saved")
+l4chtml(object,directory="l4c_saved")
 
 # seurat
 library(Seurat)

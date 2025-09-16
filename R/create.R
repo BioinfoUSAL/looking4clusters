@@ -247,12 +247,19 @@ writehtml <- function(object, includeData, directory){
     unlink(datadir, recursive = TRUE)
 }
 
-l4csave <- function(object, directory, includeData = FALSE){
-    create_l4c_directory(directory)
-    writehtml(object, includeData, directory)
-    text <- paste0("The graph has been generated in the \"",
+l4chtml <- function(object, includeData = FALSE, directory = NULL){
+    if(is.null(directory)){
+        directory <- tempfile()
+        dir.create(directory)
+        writehtml(object, includeData, directory)
+        browseURL(normalizePath(indexfile(directory)))
+    }else{
+        create_l4c_directory(directory)
+        writehtml(object, includeData, directory)
+        text <- paste0("The graph has been generated in the \"",
         normalizePath(directory),"\" path.")
-    message(text)
+        message(text)
+    }
 }
 
 write_data <- function(object,datadir){
@@ -310,15 +317,6 @@ write_clusters <- function(object,datadir){
             write(object$options$myGroups,
                 file=file.path(datadir,"mygroups.txt"))
         }
-    }
-}
-
-plot.looking4clusters <- function(x, includeData = FALSE, ...){
-    if(interactive()){
-        directory <- tempfile()
-        dir.create(directory)
-        writehtml(x, includeData, directory)
-        browseURL(normalizePath(indexfile(directory)))
     }
 }
 

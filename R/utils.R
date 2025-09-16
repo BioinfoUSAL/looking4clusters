@@ -1,7 +1,3 @@
-installed <- function(pkg){
-    return(BiocBaseUtils::checkInstalled(pkg))
-}
-
 wwwDirectory <- function(){
     path <- system.file("www",package="looking4clusters")
     return(path)

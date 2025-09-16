@@ -56,5 +56,4 @@ It can also apply dimension reduction and clustering techniques.
 }
 \examples{
 obj <- looking4clusters(iris[,1:4], groups=iris[,5], threads = 2)
-plot(obj)
 }

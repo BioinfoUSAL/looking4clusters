@@ -8,7 +8,7 @@
 ##
 
 run_tsne <- function(object,perplex=30,maxIter=1000){
-    if(installed("Rtsne")){
+    if(BiocBaseUtils::checkInstalled("Rtsne")){
         data <- object$data
         if(3 * perplex > nrow(data)-1){
             perplex <- (nrow(data)-1)/3

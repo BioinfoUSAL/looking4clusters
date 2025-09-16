@@ -1,5 +1,5 @@
 run_umap <- function(object){
-    if(installed("uwot")){
+    if(BiocBaseUtils::checkInstalled("uwot")){
         data <- object$data
         n_neighbors <- 15
         if(n_neighbors>(nrow(data)/3)){

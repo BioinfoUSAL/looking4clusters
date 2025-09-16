@@ -1,6 +1,6 @@
 Package: looking4clusters
 Type: Package
-Version: 0.99.2
+Version: 0.99.3
 Date: 2025-06-30
 Title: Interactive Visualization of scRNA-Seq
 Description: Enables the interactive visualization of dimensional
